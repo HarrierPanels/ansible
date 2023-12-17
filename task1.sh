@@ -14,6 +14,9 @@ create_inventory() {
 [managed_nodes]
 $node1_alias ansible_user=$node1_user
 $node2_alias ansible_user=$node2_user
+
+[managed_nodes:vars]
+ansible_python_interpreter=auto_legacy_silent
 EOF
 }
 
@@ -28,7 +31,7 @@ create_playbook() {
   tasks:
     - name: Display Network Interfaces
       debug:
-        msg: "Network interfaces for {{ inventory_hostname }} are {{ ansible_facts['network']['interfaces'] }}"
+        var: ansible_interfaces
 EOF
 }
 
@@ -57,3 +60,5 @@ cat $playbook_file
 # Task 5: Run Ansible playbook
 echo "Task 5: Runing Ansible playbook:"
 ansible-playbook -i "$inventory_file" "$playbook_file"
+rm "$inventory_file" "$playbook_file"
+echo 'Tasks Complete!'
