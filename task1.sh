@@ -49,8 +49,9 @@ ansible -i "$inventory_file" managed_nodes -b -m package -a "name=htop state=pre
 
 # Task 3: Print Ansible facts
 echo "Task 3: Printing Ansible facts:"
-ansible -i "$inventory_file" managed_nodes -m setup -a "filter=ansible_facts['ansible_hostname']"
-ansible -i "$inventory_file" managed_nodes -m setup -a "filter=ansible_facts['distribution']"
+ansible -i "$inventory_file" managed_nodes -m setup -a "filter=ansible_distribution"
+ansible -i "$inventory_file" managed_nodes -m setup -a "filter=ansible_hostname"
+
 
 # Task 4: Create Ansible playbook
 echo "Creating Ansible playbook $playbook_file:"

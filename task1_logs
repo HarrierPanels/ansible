@@ -1,0 +1,116 @@
+Task 1: Creating Ansible inventory inventory.ini:
+[managed_nodes]
+node1 ansible_user=ec2-user
+node2 ansible_user=ubuntu
+
+[managed_nodes:vars]
+ansible_python_interpreter=auto_legacy_silent
+Task 2: Runing ad hoc commands:
+node1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false, 
+    "ping": "pong"
+}
+node2 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    }, 
+    "changed": false, 
+    "ping": "pong"
+}
+node1 | CHANGED | rc=0 >>
+Linux node1.example.com 4.14.330-250.540.amzn2.x86_64 #1 SMP Tue Nov 21 09:57:48 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+node2 | CHANGED | rc=0 >>
+Linux node2.example.com 5.15.0-79-generic #86-Ubuntu SMP Mon Jul 10 16:07:21 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+node1 | CHANGED | rc=0 >>
+ 22:33:42 up 17 min,  1 user,  load average: 0.06, 0.23, 0.35
+node2 | CHANGED | rc=0 >>
+ 22:33:42 up 17 min,  1 user,  load average: 0.10, 0.18, 0.31
+node1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false, 
+    "msg": "", 
+    "rc": 0, 
+    "results": [
+        "htop-2.0.2-1.amzn2.0.2.x86_64 providing htop is already installed"
+    ]
+}
+node2 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    }, 
+    "cache_update_time": 1694809636, 
+    "cache_updated": false, 
+    "changed": false
+}
+Task 3: Printing Ansible facts:
+node1 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_distribution": "Amazon", 
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false
+}
+node2 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_distribution": "Ubuntu", 
+        "discovered_interpreter_python": "/usr/bin/python3"
+    }, 
+    "changed": false
+}
+node1 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_hostname": "node1", 
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": false
+}
+node2 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_hostname": "node2", 
+        "discovered_interpreter_python": "/usr/bin/python3"
+    }, 
+    "changed": false
+}
+Creating Ansible playbook network_interfaces.yml:
+---
+- name: Print Network Interfaces
+  hosts: managed_nodes
+  gather_facts: yes
+
+  tasks:
+    - name: Display Network Interfaces
+      debug:
+        var: ansible_interfaces
+Task 5: Runing Ansible playbook:
+
+PLAY [Print Network Interfaces] **********************************************************
+
+TASK [Gathering Facts] *******************************************************************
+ok: [node1]
+ok: [node2]
+
+TASK [Display Network Interfaces] ********************************************************
+ok: [node1] => {
+    "ansible_interfaces": [
+        "lo", 
+        "eth0"
+    ]
+}
+ok: [node2] => {
+    "ansible_interfaces": [
+        "lo", 
+        "enp0s8", 
+        "enp0s3"
+    ]
+}
+
+PLAY RECAP *******************************************************************************
+node1                      : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node2                      : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Tasks Complete!
