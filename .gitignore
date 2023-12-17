@@ -1,0 +1,5 @@
+# Ansible
+*.pyc
+__pycache__/
+.cache/
+.tmp/
