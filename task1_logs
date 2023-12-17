@@ -20,25 +20,14 @@ node2 | SUCCESS => {
     "changed": false, 
     "ping": "pong"
 }
-node1 | CHANGED | rc=0 >>
-Linux node1.example.com 4.14.330-250.540.amzn2.x86_64 #1 SMP Tue Nov 21 09:57:48 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
 node2 | CHANGED | rc=0 >>
 Linux node2.example.com 5.15.0-79-generic #86-Ubuntu SMP Mon Jul 10 16:07:21 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
 node1 | CHANGED | rc=0 >>
- 22:33:42 up 17 min,  1 user,  load average: 0.06, 0.23, 0.35
+Linux node1.example.com 4.14.330-250.540.amzn2.x86_64 #1 SMP Tue Nov 21 09:57:48 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
 node2 | CHANGED | rc=0 >>
- 22:33:42 up 17 min,  1 user,  load average: 0.10, 0.18, 0.31
-node1 | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python"
-    }, 
-    "changed": false, 
-    "msg": "", 
-    "rc": 0, 
-    "results": [
-        "htop-2.0.2-1.amzn2.0.2.x86_64 providing htop is already installed"
-    ]
-}
+ 22:42:54 up 6 min,  1 user,  load average: 0.42, 0.71, 0.43
+node1 | CHANGED | rc=0 >>
+ 22:42:54 up 6 min,  1 user,  load average: 0.48, 0.68, 0.39
 node2 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -46,6 +35,22 @@ node2 | SUCCESS => {
     "cache_update_time": 1694809636, 
     "cache_updated": false, 
     "changed": false
+}
+node1 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    }, 
+    "changed": true, 
+    "changes": {
+        "installed": [
+            "htop"
+        ]
+    }, 
+    "msg": "", 
+    "rc": 0, 
+    "results": [
+        "Loaded plugins: langpacks, priorities, update-motd\n226 packages excluded due to repository priority protections\nResolving Dependencies\n--> Running transaction check\n---> Package htop.x86_64 0:2.0.2-1.amzn2.0.2 will be installed\n--> Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package      Arch           Version                   Repository          Size\n================================================================================\nInstalling:\n htop         x86_64         2.0.2-1.amzn2.0.2         amzn2-core          98 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package\n\nTotal download size: 98 k\nInstalled size: 207 k\nDownloading packages:\nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : htop-2.0.2-1.amzn2.0.2.x86_64                                1/1 \n  Verifying  : htop-2.0.2-1.amzn2.0.2.x86_64                                1/1 \n\nInstalled:\n  htop.x86_64 0:2.0.2-1.amzn2.0.2                                               \n\nComplete!\n"
+    ]
 }
 Task 3: Printing Ansible facts:
 node1 | SUCCESS => {
@@ -103,8 +108,8 @@ ok: [node1] => {
 }
 ok: [node2] => {
     "ansible_interfaces": [
-        "lo", 
         "enp0s8", 
+        "lo", 
         "enp0s3"
     ]
 }
