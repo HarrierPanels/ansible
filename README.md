@@ -2,7 +2,7 @@
 [![EPAM](https://img.shields.io/badge/Configuration%20Management-Practical%20Tasks-blue)](./)
 [![HitCount](https://hits.dwyl.com/HarrierPanels/ansible.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/ansible)
 <br>
-## Practical Tasks Environment
+## Practical Tasks Prerequisites
 To complete the practical tasks for the Ansible lesson, you need to build an environment in a public cloud (e.g., AWS).
 Three Virtual Machines 	Machine Names
 
@@ -44,3 +44,21 @@ The purpose of these tasks is to apply theoretical knowledge in practice and acq
 
 Based on the requirements described, complete the following tasks:
 #### Task 1
+
+
+For this task, you will install Ansible, set up a sample project, use ad hoc Ansible commands, and get some facts about your managed servers. Also, you will write your very first playbook.
+
+Task:
+
+    Install Ansible to your control machine.
+    Using ad hoc commands, do the following tasks on the node1 and node2:
+        Test a response from node1 and node2 using the Ansible module ping.
+        Run the uname -a command on the managed nodes.
+        Check uptime.
+        Install the htop package on the managed nodes.
+    Add the managed nodes to the inventory group managed_nodes. You can use either the default inventory location or create a new inventory file in the location you prefer.
+    With an ad hoc command, please make sure is everything runs correctly:
+        Print the host names of the managed_nodes group from Ansible-facts.
+        Print the manage nodes distributive name from Ansible-facts.
+    Create a playbook to print a list of network interfaces for every virtual machine.
+
