@@ -58,7 +58,7 @@ For this task, you will install Ansible, set up a sample project, use ad hoc Ans
     - Print the host names of the managed_nodes group from Ansible-facts.
     - Print the manage nodes distributive name from Ansible-facts.
     - Create a playbook to print a list of network interfaces for every virtual machine.
-
+#### Task Implementation
 To achieve the task goals, a Bash script (**[task1.sh](./task1.sh)**) automates Ansible tasks:
 
 - Generates an Ansible inventory with specified node aliases and users.
