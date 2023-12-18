@@ -19,7 +19,9 @@ If you are creating your environment to practice in the cloud (AWS, Azure, GCP, 
 
 Update “~/.ssh/config” file on Control node to:
 Host node*
+```
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
   User <node_user>
   IdentityFile <path_to_private_ssh_key>
+```
