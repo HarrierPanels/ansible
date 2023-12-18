@@ -33,3 +33,12 @@ Update “/etc/hosts” file on each node to (change the ip to your nodes’ ip)
 192.168.0.102 node2.example.com node2
 ```
 <sub>**Note:** For these tasks, you will be working mostly on the control virtual machine. You will only need to log on to the managed nodes to troubleshoot. These virtual machines must be connected to the internet, and SSH access to the other VMs must be allowed from control.example.com. The VMs should resolve each other's FQDN (add entries in /etc/hosts).</sub>
+
+Cloud Environment
+
+If you are creating your environment to practice in the cloud (AWS, Azure, GCP, or another cloud provider), you need to meet the requirements mentioned above. Note that virtual machines can connect to each other over SSH and add the necessary entries in /etc/hosts so that they can communicate with each other by name.
+Task
+
+The purpose of this task is to apply theoretical knowledge in practice and acquire hands-on experience using the tools and technologies presented in this submodule.
+
+Based on the requirements described, complete the following tasks:
