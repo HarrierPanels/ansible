@@ -53,9 +53,9 @@ For this task, you will install Ansible, set up a sample project, use ad hoc Ans
     - Run the uname -a command on the managed nodes.
     - Check uptime.
     - Install the htop package on the managed nodes.
-    Add the managed nodes to the inventory group managed_nodes. You can use either the default inventory location or create a new inventory file in the location you prefer.
-    With an ad hoc command, please make sure is everything runs correctly:
-        Print the host names of the managed_nodes group from Ansible-facts.
-        Print the manage nodes distributive name from Ansible-facts.
-    Create a playbook to print a list of network interfaces for every virtual machine.
+- Add the managed nodes to the inventory group managed_nodes. You can use either the default inventory location or create a new inventory file in the location you prefer.
+- With an ad hoc command, please make sure is everything runs correctly:
+    - Print the host names of the managed_nodes group from Ansible-facts.
+    - Print the manage nodes distributive name from Ansible-facts.
+    - Create a playbook to print a list of network interfaces for every virtual machine.
 
