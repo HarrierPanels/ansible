@@ -1,4 +1,5 @@
-[![EPAM](https://img.shields.io/badge/Cloud&DevOps%20UA%20Lab%202nd%20Path-Configuration%20Management-green)](./)![Static Badge](https://img.shields.io/badge/:badgeContent)
+[![EPAM](https://img.shields.io/badge/Cloud&DevOps%20UA%20Lab%202nd%20Path-Configuration%20Management-green)](./)<br>
+![Static Badge](https://img.shields.io/badge/:badgeContent)
 
 [![HitCount](https://hits.dwyl.com/HarrierPanels/ansible.svg?style=flat&show=unique)](http://hits.dwyl.com/HarrierPanels/ansible)
 <br>
