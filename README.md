@@ -67,4 +67,8 @@ To achieve the task goals, a Bash script (**[task1.sh](./task1.sh)**) automates 
 - Creates an Ansible playbook for displaying network interfaces.
 - Executes the playbook on specified managed nodes.
 - Ensures cleanup by removing temporary inventory and playbook files.
-    
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ./task1.sh >task1_logs && echo See task1_logs
+See task1_logs
+```    
+All logs are saved in the **'[task1_logs](./task1_logs)'** file, providing a comprehensive overview of the executed tasks and their outcomes.
