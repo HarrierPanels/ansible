@@ -11,8 +11,6 @@ Three Virtual Machines 	Machine Names
     min 10 Gb system drive
     OS - Ubuntu 22.04 or CentOS 8
 
-	
-
     control.example.com
     node1.example.com
     node2.example.com
@@ -20,3 +18,8 @@ Three Virtual Machines 	Machine Names
 If you are creating your environment to practice in the cloud (AWS, Azure, GCP, or another cloud provider), you need to meet the requirements mentioned above. Note that virtual machines can connect to each other over SSH and add the necessary entries in /etc/hosts so that they can communicate with each other by name.
 
 Update “~/.ssh/config” file on Control node to:
+Host node*
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  User <node_user>
+  IdentityFile <path_to_private_ssh_key>
