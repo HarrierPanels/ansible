@@ -43,7 +43,7 @@ If you are creating your environment to practice in the cloud (AWS, Azure, GCP, 
 The purpose of these tasks is to apply theoretical knowledge in practice and acquire hands-on experience using the tools and technologies presented in this submodule.
 
 Based on the requirements described, complete the following tasks:
-#### Task 1
+## Task 1
 For this task, you will install Ansible, set up a sample project, use ad hoc Ansible commands, and get some facts about your managed servers. Also, you will write your very first playbook.
 
 **Goals:**
