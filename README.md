@@ -72,3 +72,29 @@ To achieve the task goals, a Bash script (**[task1.sh](./task1.sh)**) automates 
 See task1_logs
 ```    
 All logs are saved in the **'[task1_logs](./task1_logs)'** file, providing a comprehensive overview of the executed tasks and their outcomes.
+#### Managed Nodes Check
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ping -c 2 node1
+PING node1.example.com (192.168.0.205) 56(84) bytes of data.
+64 bytes from node1.example.com (192.168.0.205): icmp_seq=1 ttl=255 time=2.68 ms
+64 bytes from node1.example.com (192.168.0.205): icmp_seq=2 ttl=255 time=2.61 ms
+
+--- node1.example.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1012ms
+rtt min/avg/max/mdev = 2.619/2.653/2.687/0.034 ms
+
+[ec2-user@ip-192-168-0-145 ansible]$ ping -c 2 node2
+PING node2.example.com (192.168.0.77) 56(84) bytes of data.
+64 bytes from node2.example.com (192.168.0.77): icmp_seq=1 ttl=64 time=3.87 ms
+64 bytes from node2.example.com (192.168.0.77): icmp_seq=2 ttl=64 time=1.61 ms
+
+--- node2.example.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1013ms
+rtt min/avg/max/mdev = 1.616/2.745/3.874/1.129 ms
+
+[ec2-user@node1 ~]$ htop --version
+htop 2.0.2 - (C) 2004-2018 Hisham Muhammad
+Released under the GNU GPL.
+ubuntu@node2:~$ htop --version
+htop 3.0.5
+```
