@@ -2,13 +2,27 @@
 
 # Variables
 role_name="common"
-required_packages=("curl" "lsof" "mc" "nano" "tar" "unzip" "vim" "zip")
+packages=("curl" "lsof" "mc" "nano" "tar" "unzip" "vim" "zip")
 inventory_file="inventory.ini"
 playbook_file="common_playbook.yml"
 node1_alias="node1"
 node1_user="ec2-user"
 node2_alias="node2"
 node2_user="ubuntu"
+
+# Function to modify package array for Ansible
+create_package_array() {
+    # Create new array with commas
+    required_packages=()
+    for (( i=0; i<${#packages[@]}-1; i++ )); do
+        required_packages+=("${packages[$i]},")
+    done
+    required_packages+=("${packages[-1]}")
+}
+
+# Print new array
+echo "${packages_with_commas[@]}"
+
 
 # Function to create Ansible inventory
 create_inventory() {
@@ -18,6 +32,7 @@ $node1_alias ansible_user=$node1_user
 $node2_alias ansible_user=$node2_user
 
 [managed_nodes:vars]
+ansible_become=yes
 ansible_python_interpreter=auto_legacy_silent
 EOF
 }
@@ -32,14 +47,22 @@ create_role() {
 # Function to create task to install required packages
 create_package_task() {
     echo "Creating task to install required packages..."
-    cat <<EOF > roles/$role_name/tasks/main.yml
+    cat <<EOF > roles/$role_name/tasks/install_packages.yml
 ---
 - name: Install Required Packages
   package:
     name: "{{ item }}"
-    state: present
+    state: latest
   with_items:
-    - ${required_packages[@]}
+    - "{{ 'libsemanage-python' if ansible_distribution == 'Amazon' else 'python3-semanage' }}"
+    - "{{ 'libselinux-python' if ansible_distribution == 'Amazon' else 'python3-selinux' }}"
+    - ${required_packages[*]}
+  when: install_required_packages | default(false) | bool
+  register: install_pack
+
+- name: Show Install Required Packages output
+  debug:
+    var: install_pack
 EOF
     echo "Task to install packages created."
 }
@@ -71,6 +94,20 @@ EOF
     echo "Task to disable SELinux and handlers created."
 }
 
+# Function to create main tasks file including the package tasks
+create_main_tasks() {
+    echo "Creating main tasks file..."
+    cat <<EOF > roles/$role_name/tasks/main.yml
+---
+- name: Install packages
+  include_tasks: install_packages.yml
+
+- name: Disable SELinux
+  include_tasks: selinux.yml
+EOF
+    echo "Main tasks file created."
+}
+
 # Function to create playbook to run the 'common' role
 create_playbook() {
     echo "Creating playbook to run the 'common' role..."
@@ -94,14 +131,17 @@ delete_all() {
 # Function to run Ansible playbook
 run_playbook() {
     echo "Running Ansible playbook..."
-    ansible-playbook -i "$inventory_file" "$playbook_file"
+    ansible-playbook -i "$inventory_file" "$playbook_file" \
+      -e "install_required_packages=true" -v
 }
 
 # Main execution
+create_package_array
 create_inventory
 create_role
 create_package_task
 create_selinux_task
+create_main_tasks
 create_playbook
 run_playbook
 delete_all
