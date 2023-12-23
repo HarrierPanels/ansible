@@ -84,11 +84,11 @@ EOF
     echo "Playbook created."
 }
 
-# Function to delete Ansible role directory structure
-delete_role() {
-    echo "Deleting Ansible role structure for '$role_name'..."
-    rm -rf roles/$role_name
-    echo "Role structure deleted."
+# Function to delete Ansible files
+delete_all() {
+    echo "Deleting Ansible structure..."
+    rm -rf roles "$inventory_file" "$playbook_file"
+    echo "Ansible structure deleted."
 }
 
 # Function to run Ansible playbook
@@ -104,6 +104,6 @@ create_package_task
 create_selinux_task
 create_playbook
 run_playbook
-delete_role
+delete_all
 
 echo "Task 2 complete."
