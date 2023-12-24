@@ -49,6 +49,18 @@ create_package_task() {
     echo "Creating task to install required packages..."
     cat <<EOF > roles/$role_name/tasks/install_packages.yml
 ---
+- name: Update Amazon Linux 2
+  when: ansible_os_family == 'RedHat'
+  yum:
+    name: '*'
+    state: latest
+
+- name: Update Ubuntu
+  when: ansible_os_family == 'Debian'
+  apt:
+    upgrade: dist
+    update_cache: yes
+
 - name: Install Required Packages
   package:
     name: "{{ item }}"
@@ -56,6 +68,7 @@ create_package_task() {
   with_items:
     - "{{ 'libsemanage-python' if ansible_distribution == 'Amazon' else 'python3-semanage' }}"
     - "{{ 'libselinux-python' if ansible_distribution == 'Amazon' else 'python3-selinux' }}"
+    - "{{ 'selinux-policy' if ansible_distribution == 'Amazon' else 'policycoreutils,selinux-utils,selinux-basics' }}"
     - ${required_packages[*]}
   when: install_required_packages | default(false) | bool
   register: install_pack
@@ -72,13 +85,26 @@ create_selinux_task() {
     echo "Creating task to disable SELinux and reboot if necessary..."
     cat <<EOF > roles/$role_name/tasks/selinux.yml
 ---
+- name: Ensure SELinux-policy package is installed
+  package:
+    name: "{{ 'selinux-policy' if ansible_distribution == 'Amazon' else 'policycoreutils,selinux-utils,selinux-basics' }}"
+    state: latest
+
 - name: Disable SELinux
   selinux:
-    policy: targeted
+    policy: "{{ 'targeted' if ansible_distribution == 'Amazon' else 'default' }}"
     state: disabled
   when: disable_selinux_task | default(false) | bool
   notify:
     - Reboot if SELinux Disabled
+
+- name: Wait for system to become reachable after reboot
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 22
+    timeout: 300
+    delay: 10
+  when: disable_selinux_task | default(false) | bool
 EOF
 
     echo "Creating SELinux handlers file..."
@@ -99,8 +125,8 @@ create_main_tasks() {
     echo "Creating main tasks file..."
     cat <<EOF > roles/$role_name/tasks/main.yml
 ---
-#- name: Install packages
-#  include_tasks: install_packages.yml
+- name: Install packages
+  include_tasks: install_packages.yml
 
 - name: Disable SELinux
   include_tasks: selinux.yml
