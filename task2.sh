@@ -73,11 +73,10 @@ create_selinux_task() {
     cat <<EOF > roles/$role_name/tasks/selinux.yml
 ---
 - name: Disable SELinux
-  seboolean:
-    name: "{{ item }}"
-    state: no
-  with_items:
-    - selinuxuser_ping
+  selinux:
+    policy: targeted
+    state: disabled
+  when: disable_selinux_task | default(false) | bool
   notify:
     - Reboot if SELinux Disabled
 EOF
@@ -89,6 +88,7 @@ EOF
   command: shutdown -r now
   async: 1
   poll: 0
+  when: disable_selinux_task | default(false) | bool
 EOF
 
     echo "Task to disable SELinux and handlers created."
@@ -99,8 +99,8 @@ create_main_tasks() {
     echo "Creating main tasks file..."
     cat <<EOF > roles/$role_name/tasks/main.yml
 ---
-- name: Install packages
-  include_tasks: install_packages.yml
+#- name: Install packages
+#  include_tasks: install_packages.yml
 
 - name: Disable SELinux
   include_tasks: selinux.yml
@@ -132,7 +132,7 @@ delete_all() {
 run_playbook() {
     echo "Running Ansible playbook..."
     ansible-playbook -i "$inventory_file" "$playbook_file" \
-      -e "install_required_packages=true" -v
+      -e "install_required_packages=true"  -e "disable_selinux_task=true" -v
 }
 
 # Main execution
