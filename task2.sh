@@ -45,36 +45,48 @@ create_role() {
     echo "Role structure created."
 }
 
+# Function to create default variables
+create_defaults() {
+    echo "Creating default variables..."
+    cat <<EOF > roles/$role_name/defaults/main.yml
+---
+install_required_packages: false
+disable_selinux_task: false
+EOF
+}
+
 # Function to create task to install required packages
 create_package_task() {
     echo "Creating task to install required packages..."
     cat <<EOF > roles/$role_name/tasks/install_packages.yml
 ---
-- name: Update Amazon Linux 2
-  when: ansible_os_family == 'RedHat'
-  yum:
-    name: '*'
-    state: latest
+- name: Update OS & Install Required Packages
+  block:
+    - name: Update Amazon Linux 2
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: '*'
+        state: latest
 
-- name: Update Ubuntu
-  when: ansible_os_family == 'Debian'
-  apt:
-    upgrade: dist
-    update_cache: yes
+    - name: Update Ubuntu
+      when: ansible_os_family == 'Debian'
+      apt:
+        upgrade: dist
+        update_cache: yes
 
-- name: Install Required Packages
-  package:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - "{{ 'libsemanage-python,libselinux-python,selinux-policy' if ansible_distribution == 'Amazon' else 'python3-semanage,python3-selinux,policycoreutils,selinux-utils,selinux-basics' }}"
-    - ${required_packages[*]}
-  when: install_required_packages | default(false) | bool
-  register: install_pack
+    - name: Install Required Packages
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - "{{ 'libsemanage-python,libselinux-python,selinux-policy' if ansible_distribution == 'Amazon' else 'python3-semanage,python3-selinux,policycoreutils,selinux-utils,selinux-basics' }}"
+        - ${required_packages[*]}
+      register: install_pack
 
-- name: Show Install Required Packages output
-  debug:
-    var: install_pack
+    - name: Show Install Required Packages output
+      debug:
+        var: install_pack
+  when: install_required_packages | bool
 EOF
     echo "Task to install packages created."
 }
@@ -88,7 +100,7 @@ create_selinux_task() {
   selinux:
     policy: "{{ 'targeted' if ansible_distribution == 'Amazon' else 'default' }}"
     state: disabled
-  when: disable_selinux_task | default(false) | bool
+  when: disable_selinux_task
   notify:
     - Reboot if SELinux Disabled
     - Wait for system to become reachable after reboot
@@ -97,19 +109,20 @@ EOF
     echo "Creating SELinux handlers file..."
     cat <<EOF > roles/$role_name/handlers/main.yml
 ---
-- name: Reboot if SELinux Disabled
-  command: shutdown -r now
-  async: 1
-  poll: 0
-  when: disable_selinux_task | default(false) | bool
+- name: Reboot and Wait for System to Become Reachable
+  block:
+    - name: Reboot if SELinux Disabled
+      command: shutdown -r now
+      async: 1
+      poll: 0
 
-- name: Wait for system to become reachable after reboot
-  wait_for:
-    host: "{{ inventory_hostname }}"
-    port: 22
-    delay: 10
-  delegate_to: localhost
-  when: disable_selinux_task | default(false) | bool
+    - name: Wait for system to become reachable after reboot
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        delay: 10
+      delegate_to: localhost
+  when: disable_selinux_task | bool
 EOF
 
     echo "Task to disable SELinux and handlers created."
@@ -166,6 +179,7 @@ echo "Script started: $(date)"
 create_package_array
 create_inventory
 create_role
+create_defaults
 create_package_task
 create_selinux_task
 create_main_tasks
