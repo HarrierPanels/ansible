@@ -1,0 +1,5 @@
+---
+- name: Run 'common' Role
+  hosts: all
+  roles:
+    - common

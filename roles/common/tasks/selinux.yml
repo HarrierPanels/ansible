@@ -1,0 +1,14 @@
+---
+- name: Ensure SELinux-policy package is installed
+  package:
+    name: "{{ 'selinux-policy' if ansible_distribution == 'Amazon' else 'policycoreutils,selinux-utils,selinux-basics' }}"
+    state: latest
+
+- name: Disable SELinux
+  selinux:
+    policy: "{{ 'targeted' if ansible_distribution == 'Amazon' else 'default' }}"
+    state: disabled
+  when: disable_selinux_task | default(false) | bool
+  notify:
+    - Reboot if SELinux Disabled
+    - Wait for system to become reachable after reboot

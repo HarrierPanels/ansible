@@ -1,0 +1,6 @@
+---
+- name: Install packages
+  include_tasks: install_packages.yml
+
+- name: Disable SELinux
+  include_tasks: selinux.yml

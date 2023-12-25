@@ -84,11 +84,6 @@ create_selinux_task() {
     echo "Creating task to disable SELinux and reboot if necessary..."
     cat <<EOF > roles/$role_name/tasks/selinux.yml
 ---
-- name: Ensure SELinux-policy package is installed
-  package:
-    name: "{{ 'selinux-policy' if ansible_distribution == 'Amazon' else 'policycoreutils,selinux-utils,selinux-basics' }}"
-    state: latest
-
 - name: Disable SELinux
   selinux:
     policy: "{{ 'targeted' if ansible_distribution == 'Amazon' else 'default' }}"
