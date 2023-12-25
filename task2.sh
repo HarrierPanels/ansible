@@ -97,14 +97,7 @@ create_selinux_task() {
   when: disable_selinux_task | default(false) | bool
   notify:
     - Reboot if SELinux Disabled
-
-- name: Wait for system to become reachable after reboot
-  wait_for:
-    host: "{{ inventory_hostname }}"
-    port: 22
-    timeout: 300
-    delay: 10
-  when: disable_selinux_task | default(false) | bool
+    - Wait for system to become reachable after reboot
 EOF
 
     echo "Creating SELinux handlers file..."
@@ -114,6 +107,14 @@ EOF
   command: shutdown -r now
   async: 1
   poll: 0
+  when: disable_selinux_task | default(false) | bool
+
+- name: Wait for system to become reachable after reboot
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 22
+    delay: 10
+  delegate_to: localhost
   when: disable_selinux_task | default(false) | bool
 EOF
 
