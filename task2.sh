@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 # Variables
 role_name="common"
@@ -9,6 +9,7 @@ node1_alias="node1"
 node1_user="ec2-user"
 node2_alias="node2"
 node2_user="ubuntu"
+log_file="task2_logs"
 
 # Function to modify package array for Ansible
 create_package_array() {
@@ -66,9 +67,7 @@ create_package_task() {
     name: "{{ item }}"
     state: latest
   with_items:
-    - "{{ 'libsemanage-python' if ansible_distribution == 'Amazon' else 'python3-semanage' }}"
-    - "{{ 'libselinux-python' if ansible_distribution == 'Amazon' else 'python3-selinux' }}"
-    - "{{ 'selinux-policy' if ansible_distribution == 'Amazon' else 'policycoreutils,selinux-utils,selinux-basics' }}"
+    - "{{ 'libsemanage-python,libselinux-python,selinux-policy' if ansible_distribution == 'Amazon' else 'python3-semanage,python3-selinux,policycoreutils,selinux-utils,selinux-basics' }}"
     - ${required_packages[*]}
   when: install_required_packages | default(false) | bool
   register: install_pack
@@ -162,6 +161,12 @@ run_playbook() {
       -e "install_required_packages=true"  -e "disable_selinux_task=true" -v
 }
 
+# Redirect all output to a log file
+exec > >(tee -a ${log_file}) 2>&1
+
+# Log the script start time
+echo "Script started: $(date)"
+
 # Main execution
 create_package_array
 create_inventory
@@ -174,3 +179,6 @@ run_playbook
 delete_all
 
 echo "Task 2 complete."
+
+# Log the script end time
+echo "Script completed: $(date)"
