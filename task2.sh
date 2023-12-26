@@ -100,7 +100,7 @@ create_selinux_task() {
   selinux:
     policy: "{{ 'targeted' if ansible_distribution == 'Amazon' else 'default' }}"
     state: disabled
-  when: disable_selinux_task
+  when: disable_selinux_task | bool
   notify:
     - Reboot if SELinux Disabled
     - Wait for system to become reachable after reboot
