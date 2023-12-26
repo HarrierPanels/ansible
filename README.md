@@ -114,7 +114,7 @@ For this task, you will create your first Ansible role; use variables, handlers,
    - Reboot nodes where SELinux was disabled, and skip reboot if SELinux is already disabled.
 - Create a playbook to run the '*common*' role.
    - Run the playbook for all managed nodes.
-## Initial Node Assessment
+#### Initial Node Assessment
 ```
 [ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node1 -m shell -a '/usr/sbin/getenforce'
 node1 | CHANGED | rc=0 >>
@@ -137,6 +137,6 @@ node2 | CHANGED | rc=0 | (stdout) /usr/bin/tar
    - *curl* is found at */bin/curl*.
    - The following commands are not found in the specified paths: *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*.
 - On *node2*, the presence of essential commands (*curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*) is checked:
-     - The results indicate that *tar* is found, while the others are not present.
+   - The results indicate that *tar* is found, while the others are not present.
 ## Task 3
 # Comming soon! Check back often!
