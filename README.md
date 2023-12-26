@@ -138,6 +138,7 @@ node2 | CHANGED | rc=0 | (stdout) /usr/bin/tar
    - The following commands are not found in the specified paths: *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*.
 - On *node2*, the presence of essential commands (*curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*) is checked:
    - The results indicate that *tar* is found, while the others are not present.
+
 To achieve the task goals, the script **[task2.sh](./task2.sh)** implements an Ansible role named '*common*' with specific features. The script creates the role directory structure, default variables, and tasks to install required packages and disable *SELinux*. It utilizes Ansible's include_tasks feature for modularity and flexibility.
 ## Task 3
 # Comming soon! Check back often!
