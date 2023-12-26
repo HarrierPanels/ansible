@@ -109,12 +109,33 @@ For this task, you will create your first Ansible role; use variables, handlers,
 - Create a task (e.g., a package) to install a list of required packages on all managed nodes. The task must install nothing by default.
    - Use *include_tasks* to include the package tasks in the main.yml file.
    - The list of required packages includes *curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, and *zip*.
-
 - Create a new task to disable *SELinux* on the managed nodes.
    - The task must do nothing by default.
    - Reboot nodes where SELinux was disabled, and skip reboot if SELinux is already disabled.
 - Create a playbook to run the '*common*' role.
    - Run the playbook for all managed nodes.
+## Initial Node Assessment
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node1 -m shell -a '/usr/sbin/getenforce'
+node1 | CHANGED | rc=0 >>
+Disabled
 
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node2 -m shell -a 'getenforce'
+node2 | FAILED | rc=127 >>
+/bin/sh: 1: getenforce: not foundnon-zero return code
+```
+- On *node1*, SELinux is confirmed to be disabled.
+- On *node2*, an attempt to execute getenforce fails, indicating that SELinux is not present.
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node1 -m shell -a 'which curl /usr/sbin/lsof mc nano tar unzip vim zip || true' -o
+node1 | CHANGED | rc=0 | (stdout) /bin/curl (stderr) which: no lsof in (/usr/sbin)\nwhich: no mc in (/sbin:/bin:/usr/sbin:/usr/bin)\nwhich: no nano in (/sbin:/bin:/usr/sbin:/usr/bin)\nwhich: no tar in (/sbin:/bin:/usr/sbin:/usr/bin)\nwhich: no unzip in (/sbin:/bin:/usr/sbin:/usr/bin)\nwhich: no vim in (/sbin:/bin:/usr/sbin:/usr/bin)\nwhich: no zip in (/sbin:/bin:/usr/sbin:/usr/bin)
+
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node2 -m shell -a 'which curl lsof mc nano tar unzip vim zip || true' -o
+node2 | CHANGED | rc=0 | (stdout) /usr/bin/tar
+```
+- The output indicates that on *node1*:
+    - *curl* is found at */bin/curl*.
+    - The following commands are not found in the specified paths: *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*.
+- On *node2*, the presence of essential commands (*curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*) is checked.        - The results indicate that *tar* is found, while the others are not present.
 ## Task 3
 # Comming soon! Check back often!
