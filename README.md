@@ -151,6 +151,37 @@ The script provides flexibility by allowing users to customize the execution wit
 
 The log file **[task2_logs](./task2_logs)** demonstrates the execution of tasks related to package installation, SELinux handling, potential reboots, and overall system configuration using Ansible.
 #### Task Results Summary:
-- **SELinux Status Check:**
+- SELinux Status Check:
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node1 -m shell -a '/usr/sbin/getenforce'
+node1 | CHANGED | rc=0 >>
+Disabled
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node2 -m shell -a 'getenforce'
+node2 | CHANGED | rc=0 >>
+Disabled
+```
+- Package Existence Check:
+```
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node1 -m shell -a 'which curl /usr/sbin/lsof mc nano tar unzip vim zip'
+node1 | CHANGED | rc=0 >>
+/usr/bin/curl
+/usr/sbin/lsof
+/usr/bin/mc
+/usr/bin/nano
+/usr/bin/tar
+/usr/bin/unzip
+/usr/bin/vim
+/usr/bin/zip
+[ec2-user@ip-192-168-0-145 ansible]$ ansible -i hosts node2 -m shell -a 'which curl lsof mc nano tar unzip vim zip'
+node2 | CHANGED | rc=0 >>
+/usr/bin/curl
+/usr/bin/lsof
+/usr/bin/mc
+/usr/bin/nano
+/usr/bin/tar
+/usr/bin/unzip
+/usr/bin/vim
+/usr/bin/zip
+```
 ## Task 3
 # Comming soon! Check back often!
