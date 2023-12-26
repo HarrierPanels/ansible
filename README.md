@@ -136,7 +136,7 @@ node2 | CHANGED | rc=0 | (stdout) /usr/bin/tar
 - The output indicates that on *node1*:
    - *curl* is found at */bin/curl*.
    - The following commands are not found in the specified paths: *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*.
-- On *node2*, the presence of essential commands (*curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*) is checked.
-   - The results indicate that *tar* is found, while the others are not present.
+- On *node2*, the presence of essential commands (*curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, *zip*) is checked:
+     - The results indicate that *tar* is found, while the others are not present.
 ## Task 3
 # Comming soon! Check back often!
