@@ -142,13 +142,15 @@ node2 | CHANGED | rc=0 | (stdout) /usr/bin/tar
 To achieve the task goals, the script **[task2.sh](./task2.sh)** implements an Ansible role named '*common*' with specific features. The script creates the role directory structure, default variables, and tasks to install required packages and disable *SELinux*. It utilizes Ansible's include_tasks feature for modularity and flexibility.
 
 #### Script Overview:
-
-    - Initializes variables, including the role name, required packages, and node details.
-    - Defines functions to create the Ansible role structure, default variables, and tasks.
-    - Generates an Ansible playbook to run the 'common' role for all managed nodes.
-    - Executes the playbook, specifying optional -e variables for tasks such as package installation and SELinux disabling.
-    - Deletes Ansible files after execution.
+- Initializes variables, including the role name, required packages, and node details.
+- Defines functions to create the Ansible role structure, default variables, and tasks.
+- Generates an Ansible playbook to run the 'common' role for all managed nodes.
+- Executes the playbook, specifying optional -e variables for tasks such as package installation and SELinux disabling.
+- Deletes Ansible files after execution.
 
 The script provides flexibility by allowing users to customize the execution with optional *-e* variables, ensuring modularity and efficient role management in Ansible.
+
+The log file **[task2_logs](./task2_logs)** demonstrates the execution of tasks related to package installation, SELinux handling, potential reboots, and overall system configuration using Ansible.
+
 ## Task 3
 # Comming soon! Check back often!
