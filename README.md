@@ -183,5 +183,6 @@ node2 | CHANGED | rc=0 >>
 /usr/bin/vim
 /usr/bin/zip
 ```
+The SELinux status check indicates that SELinux is disabled on both nodes. The package existence check verifies the presence of specified packages on both nodes. Task 2 complete!
 ## Task 3
 # Comming soon! Check back often!
