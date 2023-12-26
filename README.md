@@ -107,14 +107,11 @@ For this task, you will create your first Ansible role; use variables, handlers,
     - tasks
     - handlers
 - Create a task (e.g., a package) to install a list of required packages on all managed nodes. The task must install nothing by default.
-    some image
+   - Use *include_tasks* to include the package tasks in the main.yml file.
+   - The list of required packages includes *curl*, *lsof*, *mc*, *nano*, *tar*, *unzip*, *vim*, and *zip*.
 
-    Use include_tasks to include the package tasks in the main.yml file.
-
-    The list of required packages includes curl, lsof, mc, nano, tar, unzip, vim, and zip.
-    Create a new task to disable SELinux on the managed nodes. The task must do nothing by default. Reboot nodes where SELinux was disabled, and skip reboot if SELinux is already disabled.
-    Create a playbook to run the common role. Run the playbook for all managed nodes.
-
+- Create a new task to disable SELinux on the managed nodes. The task must do nothing by default. Reboot nodes where SELinux was disabled, and skip reboot if SELinux is already disabled.
+   - Create a playbook to run the common role. Run the playbook for all managed nodes.
 
 ## Task 3
 # Comming soon! Check back often!
