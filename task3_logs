@@ -1,0 +1,234 @@
+++ date
++ echo 'Script started: Wed Dec 27 12:02:27 UTC 2023'
+Script started: Wed Dec 27 12:02:27 UTC 2023
++ create_inventory
++ cat
++ create_role
++ echo 'Creating Ansible role structure for '\''collectd'\''...'
+Creating Ansible role structure for 'collectd'...
++ mkdir -p roles/collectd/defaults roles/collectd/files roles/collectd/handlers roles/collectd/tasks roles/collectd/templates
++ echo 'Role structure created.'
+Role structure created.
++ create_defaults
++ echo 'Creating default variables...'
+Creating default variables...
++ cat
++ create_collectd_task
++ echo 'Creating task to manage collectd...'
+Creating task to manage collectd...
++ cat
++ create_install_task
++ echo 'Creating task to install collectd...'
+Creating task to install collectd...
++ cat
++ create_remove_task
++ echo 'Creating task to remove collectd...'
+Creating task to remove collectd...
++ cat
++ create_handler
++ echo 'Creating handler to restart collectd...'
+Creating handler to restart collectd...
++ cat
++ create_prometheus_template
++ echo 'Creating Prometheus Config Template...'
+Creating Prometheus Config Template...
++ cat
++ create_playbook
++ echo 'Creating playbook to run the '\''collectd'\'' role...'
+Creating playbook to run the 'collectd' role...
++ cat
++ echo 'Playbook created.'
+Playbook created.
++ run_playbooks
++ echo 'Running Ansible playbooks...'
+Running Ansible playbooks...
++ ansible-playbook -i inventory.ini collectd_playbook.yml -vv
+ansible-playbook 2.9.27
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible-playbook
+  python version = 2.7.18 (default, Oct 19 2023, 21:17:03) [GCC 7.3.1 20180712 (Red Hat 7.3.1-17)]
+Using /etc/ansible/ansible.cfg as config file
+Skipping callback 'actionable', as we already have a stdout callback.
+Skipping callback 'counter_enabled', as we already have a stdout callback.
+Skipping callback 'debug', as we already have a stdout callback.
+Skipping callback 'dense', as we already have a stdout callback.
+Skipping callback 'dense', as we already have a stdout callback.
+Skipping callback 'full_skip', as we already have a stdout callback.
+Skipping callback 'json', as we already have a stdout callback.
+Skipping callback 'minimal', as we already have a stdout callback.
+Skipping callback 'null', as we already have a stdout callback.
+Skipping callback 'oneline', as we already have a stdout callback.
+Skipping callback 'selective', as we already have a stdout callback.
+Skipping callback 'skippy', as we already have a stdout callback.
+Skipping callback 'stderr', as we already have a stdout callback.
+Skipping callback 'unixy', as we already have a stdout callback.
+Skipping callback 'yaml', as we already have a stdout callback.
+
+PLAYBOOK: collectd_playbook.yml **********************************************************
+1 plays in collectd_playbook.yml
+
+PLAY [Run 'collectd' Role] ***************************************************************
+
+TASK [Gathering Facts] *******************************************************************
+task path: /home/ec2-user/ansible/collectd_playbook.yml:2
+ok: [node1]
+ok: [node2]
+META: ran handlers
+META: ran handlers
+META: ran handlers
+
+PLAY RECAP *******************************************************************************
+node1                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node2                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
++ ansible-playbook -i inventory.ini collectd_playbook.yml -e install_collectd=false -vv
+ansible-playbook 2.9.27
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible-playbook
+  python version = 2.7.18 (default, Oct 19 2023, 21:17:03) [GCC 7.3.1 20180712 (Red Hat 7.3.1-17)]
+Using /etc/ansible/ansible.cfg as config file
+Skipping callback 'actionable', as we already have a stdout callback.
+Skipping callback 'counter_enabled', as we already have a stdout callback.
+Skipping callback 'debug', as we already have a stdout callback.
+Skipping callback 'dense', as we already have a stdout callback.
+Skipping callback 'dense', as we already have a stdout callback.
+Skipping callback 'full_skip', as we already have a stdout callback.
+Skipping callback 'json', as we already have a stdout callback.
+Skipping callback 'minimal', as we already have a stdout callback.
+Skipping callback 'null', as we already have a stdout callback.
+Skipping callback 'oneline', as we already have a stdout callback.
+Skipping callback 'selective', as we already have a stdout callback.
+Skipping callback 'skippy', as we already have a stdout callback.
+Skipping callback 'stderr', as we already have a stdout callback.
+Skipping callback 'unixy', as we already have a stdout callback.
+Skipping callback 'yaml', as we already have a stdout callback.
+
+PLAYBOOK: collectd_playbook.yml **********************************************************
+1 plays in collectd_playbook.yml
+
+PLAY [Run 'collectd' Role] ***************************************************************
+
+TASK [Gathering Facts] *******************************************************************
+task path: /home/ec2-user/ansible/collectd_playbook.yml:2
+ok: [node1]
+ok: [node2]
+META: ran handlers
+META: ran handlers
+META: ran handlers
+
+PLAY RECAP *******************************************************************************
+node1                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node2                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
++ delete_all
++ cat inventory.ini collectd_playbook.yml roles/collectd/templates/prometheus.conf.j2 roles/collectd/handlers/main.yml roles/collectd/tasks/remove_collectd.yml roles/collectd/defaults/main.yml roles/collectd/tasks/install_collectd.yml roles/collectd/tasks/manage_collectd.yml
+[managed_nodes]
+node1 ansible_user=ec2-user
+node2 ansible_user=ubuntu
+
+[managed_nodes:vars]
+ansible_become=yes
+ansible_python_interpreter=auto_legacy_silent
+---
+- name: Run 'collectd' Role
+  hosts: all
+  roles:
+    - collectd
+LoadPlugin write_prometheus
+<Plugin write_prometheus>
+   Port {{ collectd_exporter_port }}
+   {% for module in collectd_modules %}
+   LoadPlugin {{ module }}
+   {% endfor %}
+</Plugin>
+---
+- name: Collectd Management
+  block:
+    - name: Restart Collectd
+      service:
+        name: collectd
+        state: restarted
+      when: install_collectd | bool
+
+    - name: Test Collectd
+      uri:
+        url: "http://{{ ansible_hostname }}:{{ collectd_exporter_port }}"
+        method: GET
+        status_code: 200
+        return_content: yes
+        validate_certs: no
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 5
+      ignore_errors: true
+      changed_when: false
+  when: install_collectd | bool
+---
+- name: Remove Collectd
+  block:
+    - name: Stop and Disable Collectd
+      systemd:
+        name: collectd
+        state: stopped
+        enabled: no
+      notify: Restart Collectd
+    - name: Remove Collectd and Plugins
+      package:
+        name: collectd
+        state: absent
+      notify: Restart Collectd
+    - name: Remove Config Files
+      file:
+        path: "/etc/collectd.d/{{ item }}"
+        state: absent
+      with_items:
+        - prometheus.conf
+      notify:
+        - Restart Collectd
+        - Test Collectd
+
+  when: not install_collectd | bool
+---
+install_collectd: true
+collectd_exporter_port: 9103
+collectd_modules:
+  - df
+  - processes
+  - protocols
+  - swap
+  - tcpconns
+  - uptime
+  - users
+  - vmem
+---
+- name: Install Collectd
+  block:
+    - name: Update OS & Install Collectd
+      package:
+        name: collectd
+        state: latest
+      notify: Restart Collectd
+    - name: Copy Prometheus Config Template
+      template:
+        src: prometheus.conf.j2
+        dest: /etc/collectd.d/prometheus.conf
+      notify: Restart Collectd
+  when: install_collectd | bool
+---
+- name: Install or Remove Collectd
+  include_tasks: "{{ install_collectd | bool | ternary('install_collectd.yml', 'remove_collectd.yml') }}"
++ echo 'Deleting Ansible structure...'
+Deleting Ansible structure...
++ rm -rf roles inventory.ini collectd_playbook.yml
++ echo 'Ansible structure deleted.'
+Ansible structure deleted.
++ echo 'Task 3 complete.'
+Task 3 complete.
+++ date
++ echo 'Script completed: Wed Dec 27 12:02:44 UTC 2023'
+Script completed: Wed Dec 27 12:02:44 UTC 2023

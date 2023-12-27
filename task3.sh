@@ -2,7 +2,6 @@
 
 # Variables
 collectd_role="collectd"
-install_collectd=true  # Change to false to remove collectd
 inventory_file="inventory.ini"
 playbook_file="collectd_playbook.yml"
 node1_alias="node1"
@@ -36,7 +35,7 @@ create_defaults() {
     echo "Creating default variables..."
     cat <<EOF > roles/$collectd_role/defaults/main.yml
 ---
-install_collectd: $install_collectd
+install_collectd: true
 collectd_exporter_port: 9103
 collectd_modules:
   - df
@@ -104,7 +103,10 @@ create_remove_task() {
         state: absent
       with_items:
         - prometheus.conf
-      notify: Restart Collectd
+      notify:
+        - Restart Collectd
+        - Test Collectd
+
   when: not install_collectd | bool
 EOF
 }
@@ -114,10 +116,28 @@ create_handler() {
     echo "Creating handler to restart collectd..."
     cat <<EOF > roles/$collectd_role/handlers/main.yml
 ---
-- name: Restart Collectd
-  service:
-    name: collectd
-    state: restarted
+- name: Collectd Management
+  block:
+    - name: Restart Collectd
+      service:
+        name: collectd
+        state: restarted
+      when: install_collectd | bool
+
+    - name: Test Collectd
+      uri:
+        url: "http://{{ ansible_hostname }}:{{ collectd_exporter_port }}"
+        method: GET
+        status_code: 200
+        return_content: yes
+        validate_certs: no
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 5
+      ignore_errors: true
+      changed_when: false
+  when: install_collectd | bool
 EOF
 }
 
@@ -150,15 +170,24 @@ EOF
 
 # Function to delete Ansible files
 delete_all() {
+    cat "$inventory_file" "$playbook_file" \
+        roles/$collectd_role/templates/prometheus.conf.j2 \
+        roles/$collectd_role/handlers/main.yml \
+        roles/$collectd_role/tasks/remove_collectd.yml \
+        roles/$collectd_role/defaults/main.yml \
+        roles/$collectd_role/tasks/install_collectd.yml \
+        roles/$collectd_role/tasks/manage_collectd.yml
     echo "Deleting Ansible structure..."
     rm -rf roles "$inventory_file" "$playbook_file"
     echo "Ansible structure deleted."
 }
 
-# Function to run Ansible playbook
-run_playbook() {
-    echo "Running Ansible playbook..."
-    ansible-playbook -i "$inventory_file" "$playbook_file" -v
+# Function to run Ansible playbooks
+run_playbooks() {
+    echo "Running Ansible playbooks..."
+    ansible-playbook -i "$inventory_file" "$playbook_file" -vv
+    ansible-playbook -i "$inventory_file" "$playbook_file" \
+        -e install_collectd=false -vv
 }
 
 # Redirect all output to a log file
@@ -177,7 +206,7 @@ create_remove_task
 create_handler
 create_prometheus_template
 create_playbook
-run_playbook
+run_playbooks
 delete_all
 
 echo "Task 3 complete."
