@@ -92,11 +92,13 @@ create_remove_task() {
         state: stopped
         enabled: no
       notify: Restart Collectd
+
     - name: Remove Collectd and Plugins
       package:
         name: collectd
         state: absent
       notify: Restart Collectd
+
     - name: Remove Config Files
       file:
         path: "/etc/collectd.d/{{ item }}"
@@ -122,7 +124,6 @@ create_handler() {
       service:
         name: collectd
         state: restarted
-      when: install_collectd | bool
 
     - name: Test Collectd
       uri:
@@ -186,8 +187,8 @@ delete_all() {
 run_playbooks() {
     echo "Running Ansible playbooks..."
     ansible-playbook -i "$inventory_file" "$playbook_file" -vv
-    ansible-playbook -i "$inventory_file" "$playbook_file" \
-        -e install_collectd=false -vv
+#    ansible-playbook -i "$inventory_file" "$playbook_file" \
+#        -e install_collectd=false -vv
 }
 
 # Redirect all output to a log file

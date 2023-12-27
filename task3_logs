@@ -1,6 +1,6 @@
 ++ date
-+ echo 'Script started: Wed Dec 27 12:02:27 UTC 2023'
-Script started: Wed Dec 27 12:02:27 UTC 2023
++ echo 'Script started: Wed Dec 27 12:12:27 UTC 2023'
+Script started: Wed Dec 27 12:12:27 UTC 2023
 + create_inventory
 + cat
 + create_role
@@ -83,47 +83,6 @@ PLAY RECAP *********************************************************************
 node1                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 node2                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
-+ ansible-playbook -i inventory.ini collectd_playbook.yml -e install_collectd=false -vv
-ansible-playbook 2.9.27
-  config file = /etc/ansible/ansible.cfg
-  configured module search path = [u'/home/ec2-user/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
-  ansible python module location = /usr/lib/python2.7/site-packages/ansible
-  executable location = /usr/bin/ansible-playbook
-  python version = 2.7.18 (default, Oct 19 2023, 21:17:03) [GCC 7.3.1 20180712 (Red Hat 7.3.1-17)]
-Using /etc/ansible/ansible.cfg as config file
-Skipping callback 'actionable', as we already have a stdout callback.
-Skipping callback 'counter_enabled', as we already have a stdout callback.
-Skipping callback 'debug', as we already have a stdout callback.
-Skipping callback 'dense', as we already have a stdout callback.
-Skipping callback 'dense', as we already have a stdout callback.
-Skipping callback 'full_skip', as we already have a stdout callback.
-Skipping callback 'json', as we already have a stdout callback.
-Skipping callback 'minimal', as we already have a stdout callback.
-Skipping callback 'null', as we already have a stdout callback.
-Skipping callback 'oneline', as we already have a stdout callback.
-Skipping callback 'selective', as we already have a stdout callback.
-Skipping callback 'skippy', as we already have a stdout callback.
-Skipping callback 'stderr', as we already have a stdout callback.
-Skipping callback 'unixy', as we already have a stdout callback.
-Skipping callback 'yaml', as we already have a stdout callback.
-
-PLAYBOOK: collectd_playbook.yml **********************************************************
-1 plays in collectd_playbook.yml
-
-PLAY [Run 'collectd' Role] ***************************************************************
-
-TASK [Gathering Facts] *******************************************************************
-task path: /home/ec2-user/ansible/collectd_playbook.yml:2
-ok: [node1]
-ok: [node2]
-META: ran handlers
-META: ran handlers
-META: ran handlers
-
-PLAY RECAP *******************************************************************************
-node1                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-node2                      : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-
 + delete_all
 + cat inventory.ini collectd_playbook.yml roles/collectd/templates/prometheus.conf.j2 roles/collectd/handlers/main.yml roles/collectd/tasks/remove_collectd.yml roles/collectd/defaults/main.yml roles/collectd/tasks/install_collectd.yml roles/collectd/tasks/manage_collectd.yml
 [managed_nodes]
@@ -152,7 +111,6 @@ LoadPlugin write_prometheus
       service:
         name: collectd
         state: restarted
-      when: install_collectd | bool
 
     - name: Test Collectd
       uri:
@@ -177,11 +135,13 @@ LoadPlugin write_prometheus
         state: stopped
         enabled: no
       notify: Restart Collectd
+
     - name: Remove Collectd and Plugins
       package:
         name: collectd
         state: absent
       notify: Restart Collectd
+
     - name: Remove Config Files
       file:
         path: "/etc/collectd.d/{{ item }}"
@@ -230,5 +190,5 @@ Ansible structure deleted.
 + echo 'Task 3 complete.'
 Task 3 complete.
 ++ date
-+ echo 'Script completed: Wed Dec 27 12:02:44 UTC 2023'
-Script completed: Wed Dec 27 12:02:44 UTC 2023
++ echo 'Script completed: Wed Dec 27 12:12:37 UTC 2023'
+Script completed: Wed Dec 27 12:12:37 UTC 2023
