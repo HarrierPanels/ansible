@@ -1,6 +1,6 @@
 ++ date
-+ echo 'Script started: Wed Dec 27 12:12:27 UTC 2023'
-Script started: Wed Dec 27 12:12:27 UTC 2023
++ echo 'Script started: Wed Dec 27 12:21:20 UTC 2023'
+Script started: Wed Dec 27 12:21:20 UTC 2023
 + create_inventory
 + cat
 + create_role
@@ -173,15 +173,28 @@ collectd_modules:
         name: collectd
         state: latest
       notify: Restart Collectd
+
     - name: Copy Prometheus Config Template
       template:
         src: prometheus.conf.j2
         dest: /etc/collectd.d/prometheus.conf
-      notify: Restart Collectd
+      notify:
+        - Restart Collectd
+        - Test Collectd
+  register: install_collectd_var
   when: install_collectd | bool
+
+- name: Debug Install Collectd
+  debug:
+    var: install_collectd_var
 ---
-- name: Install or Remove Collectd
+- name: Manage (Install or Remove) Collectd
   include_tasks: "{{ install_collectd | bool | ternary('install_collectd.yml', 'remove_collectd.yml') }}"
+  register: manage_collectd
+
+- name: Debug Manage Collectd
+  debug:
+    var: manage_collectd
 + echo 'Deleting Ansible structure...'
 Deleting Ansible structure...
 + rm -rf roles inventory.ini collectd_playbook.yml
@@ -190,5 +203,5 @@ Ansible structure deleted.
 + echo 'Task 3 complete.'
 Task 3 complete.
 ++ date
-+ echo 'Script completed: Wed Dec 27 12:12:37 UTC 2023'
-Script completed: Wed Dec 27 12:12:37 UTC 2023
++ echo 'Script completed: Wed Dec 27 12:21:31 UTC 2023'
+Script completed: Wed Dec 27 12:21:31 UTC 2023

@@ -54,8 +54,13 @@ create_collectd_task() {
     echo "Creating task to manage collectd..."
     cat <<EOF > roles/$collectd_role/tasks/manage_collectd.yml
 ---
-- name: Install or Remove Collectd
+- name: Manage (Install or Remove) Collectd
   include_tasks: "{{ install_collectd | bool | ternary('install_collectd.yml', 'remove_collectd.yml') }}"
+  register: manage_collectd
+
+- name: Debug Manage Collectd
+  debug:
+    var: manage_collectd
 EOF
 }
 
@@ -71,12 +76,20 @@ create_install_task() {
         name: collectd
         state: latest
       notify: Restart Collectd
+
     - name: Copy Prometheus Config Template
       template:
         src: prometheus.conf.j2
         dest: /etc/collectd.d/prometheus.conf
-      notify: Restart Collectd
+      notify:
+        - Restart Collectd
+        - Test Collectd
+  register: install_collectd_var
   when: install_collectd | bool
+
+- name: Debug Install Collectd
+  debug:
+    var: install_collectd_var
 EOF
 }
 
