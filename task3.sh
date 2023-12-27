@@ -52,15 +52,10 @@ EOF
 # Function to create task to manage collectd
 create_collectd_task() {
     echo "Creating task to manage collectd..."
-    cat <<EOF > roles/$collectd_role/tasks/manage_collectd.yml
+    cat <<EOF > roles/$collectd_role/tasks/main.yml
 ---
-- name: Manage (Install or Remove) Collectd
+- name: Install or Remove Collectd
   include_tasks: "{{ install_collectd | bool | ternary('install_collectd.yml', 'remove_collectd.yml') }}"
-  register: manage_collectd
-
-- name: Debug Manage Collectd
-  debug:
-    var: manage_collectd
 EOF
 }
 
@@ -84,12 +79,7 @@ create_install_task() {
       notify:
         - Restart Collectd
         - Test Collectd
-  register: install_collectd_var
   when: install_collectd | bool
-
-- name: Debug Install Collectd
-  debug:
-    var: install_collectd_var
 EOF
 }
 
@@ -118,9 +108,6 @@ create_remove_task() {
         state: absent
       with_items:
         - prometheus.conf
-      notify:
-        - Restart Collectd
-        - Test Collectd
 
   when: not install_collectd | bool
 EOF
@@ -184,13 +171,6 @@ EOF
 
 # Function to delete Ansible files
 delete_all() {
-    cat "$inventory_file" "$playbook_file" \
-        roles/$collectd_role/templates/prometheus.conf.j2 \
-        roles/$collectd_role/handlers/main.yml \
-        roles/$collectd_role/tasks/remove_collectd.yml \
-        roles/$collectd_role/defaults/main.yml \
-        roles/$collectd_role/tasks/install_collectd.yml \
-        roles/$collectd_role/tasks/manage_collectd.yml
     echo "Deleting Ansible structure..."
     rm -rf roles "$inventory_file" "$playbook_file"
     echo "Ansible structure deleted."
@@ -199,9 +179,9 @@ delete_all() {
 # Function to run Ansible playbooks
 run_playbooks() {
     echo "Running Ansible playbooks..."
-    ansible-playbook -i "$inventory_file" "$playbook_file" -vv
-#    ansible-playbook -i "$inventory_file" "$playbook_file" \
-#        -e install_collectd=false -vv
+    ansible-playbook -i "$inventory_file" "$playbook_file" -v
+    ansible-playbook -i "$inventory_file" "$playbook_file" \
+        -e install_collectd=false -v
 }
 
 # Redirect all output to a log file
