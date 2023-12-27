@@ -75,7 +75,7 @@ create_install_task() {
     - name: Copy Prometheus Config Template
       template:
         src: prometheus.conf.j2
-        dest: /etc/collectd.d/prometheus.conf
+        dest: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
       notify:
         - Restart Collectd
         - Test Collectd
@@ -180,8 +180,8 @@ delete_all() {
 run_playbooks() {
     echo "Running Ansible playbooks..."
     ansible-playbook -i "$inventory_file" "$playbook_file" -v
-    ansible-playbook -i "$inventory_file" "$playbook_file" \
-        -e install_collectd=false -v
+#    ansible-playbook -i "$inventory_file" "$playbook_file" \
+#        -e install_collectd=false -v
 }
 
 # Redirect all output to a log file
