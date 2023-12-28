@@ -68,7 +68,7 @@ create_install_task() {
   block:
     - name: Update OS & Install Collectd
       package:
-        name: collectd
+        name: "{{ 'collectd,collectd-write_prometheus' if ansible_os_family == 'RedHat' else 'collectd' }}"
         state: latest
       notify: Restart Collectd
 
@@ -180,8 +180,8 @@ delete_all() {
 run_playbooks() {
     echo "Running Ansible playbooks..."
     ansible-playbook -i "$inventory_file" "$playbook_file" -v
-#    ansible-playbook -i "$inventory_file" "$playbook_file" \
-#        -e install_collectd=false -v
+    ansible-playbook -i "$inventory_file" "$playbook_file" \
+        -e install_collectd=false -v
 }
 
 # Redirect all output to a log file
