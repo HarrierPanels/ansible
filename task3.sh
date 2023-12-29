@@ -59,7 +59,7 @@ create_collectd_task() {
 EOF
 }
 
-# Function to create main tasks files for installation and removal
+# Functions to create main tasks files for installation and removal
 create_install_task() {
     echo "Creating task to install collectd..."
     cat <<EOF > roles/$collectd_role/tasks/install_collectd.yml
@@ -89,28 +89,24 @@ create_remove_task() {
 ---
 - name: Remove Collectd
   block:
+    - name: Remove Config Files
+      file:
+        path: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
+        state: absent
+
     - name: Stop and Disable Collectd
       systemd:
         name: collectd
         state: stopped
         enabled: no
-      notify: Restart Collectd
 
     - name: Remove Collectd and Plugins
       package:
-        name: collectd
+        name: "{{ 'collectd,collectd-write_prometheus' if ansible_os_family == 'RedHat' else 'collectd' }}"
         state: absent
-      notify: Restart Collectd
-
-    - name: Remove Config Files
-      file:
-        path: "/etc/collectd.d/{{ item }}"
-        state: absent
-      with_items:
-        - prometheus.conf
-
   when: not install_collectd | bool
 EOF
+    echo "Task to remove collectd created."
 }
 
 # Function to create handler to restart collectd
