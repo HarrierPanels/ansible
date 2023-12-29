@@ -66,6 +66,18 @@ create_install_task() {
 ---
 - name: Install Collectd
   block:
+    - name: Update Amazon Linux 2
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Update Ubuntu
+      when: ansible_os_family == 'Debian'
+      apt:
+        upgrade: dist
+        update_cache: yes
+
     - name: Update OS & Install Collectd
       package:
         name: "{{ 'collectd,collectd-write_prometheus' if ansible_os_family == 'RedHat' else 'collectd' }}"
@@ -104,6 +116,24 @@ create_remove_task() {
       package:
         name: "{{ 'collectd,collectd-write_prometheus' if ansible_os_family == 'RedHat' else 'collectd' }}"
         state: absent
+      async: 120  # 2 minutes
+      poll: 0
+      retries: 15
+      delay: 10  # 10 seconds between retries
+
+
+    - name: Clean cache & remove Collectd directory (Debian only)
+      block:
+        - name: Clean up APT cache (Debian only)
+          apt:
+            autoclean: yes
+            autoremove: yes
+
+        - name: Remove Collectd directory (Debian only)
+          file:
+            path: "/etc/collectd"
+            state: absent
+      when: ansible_os_family == 'Debian'
   when: not install_collectd | bool
 EOF
     echo "Task to remove collectd created."
