@@ -1,4 +1,7 @@
 # Ansible
+roles/
+*.ini
+*.yml
 *.pyc
 __pycache__/
 .cache/
