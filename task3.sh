@@ -72,11 +72,23 @@ create_install_task() {
         name: '*'
         state: latest
 
-    - name: Update Ubuntu
+    - name: Updating Ubuntu
+      block:
+        - name: Release APT lock (Ubuntu only)
+          command: "sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock*"
+          ignore_errors: yes
+          changed_when: false
+
+        - name: Configure dpkg (Ubuntu only)
+          command: "sudo dpkg --configure -a"
+          ignore_errors: yes
+          changed_when: false
+
+        - name: Update Ubuntu
+          apt:
+            upgrade: dist
+            update_cache: yes
       when: ansible_os_family == 'Debian'
-      apt:
-        upgrade: dist
-        update_cache: yes
 
     - name: Update OS & Install Collectd
       package:
@@ -233,4 +245,3 @@ echo "Task 3 complete."
 
 # Log the script end time
 echo "Script completed: $(date)"
-

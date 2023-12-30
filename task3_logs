@@ -1,0 +1,69 @@
+++ date
++ echo 'Script started: Sat Dec 30 22:28:21 UTC 2023'
+Script started: Sat Dec 30 22:28:21 UTC 2023
++ create_inventory
++ cat
++ create_role
++ echo 'Creating Ansible role structure for '\''collectd'\''...'
+Creating Ansible role structure for 'collectd'...
++ mkdir -p roles/collectd/defaults roles/collectd/files roles/collectd/handlers roles/collectd/tasks roles/collectd/templates
++ echo 'Role structure created.'
+Role structure created.
++ create_defaults
++ echo 'Creating default variables...'
+Creating default variables...
++ cat
++ create_collectd_task
++ echo 'Creating task to manage collectd...'
+Creating task to manage collectd...
++ cat
++ create_install_task
++ echo 'Creating task to install collectd...'
+Creating task to install collectd...
++ cat
++ create_remove_task
++ echo 'Creating task to remove collectd...'
+Creating task to remove collectd...
++ cat
++ echo 'Task to remove collectd created.'
+Task to remove collectd created.
++ create_handler
++ echo 'Creating handler to restart collectd...'
+Creating handler to restart collectd...
++ cat
++ create_prometheus_template
++ echo 'Creating Prometheus Config Template...'
+Creating Prometheus Config Template...
++ cat
++ create_playbook
++ echo 'Creating playbook to run the '\''collectd'\'' role...'
+Creating playbook to run the 'collectd' role...
++ cat
++ echo 'Playbook created.'
+Playbook created.
++ run_playbooks
++ echo 'Running Ansible playbooks...'
+Running Ansible playbooks...
++ ansible-playbook -i inventory.ini collectd_playbook.yml -v
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [Run 'collectd' Role] ***********************************************************************************************
+
+TASK [Gathering Facts] ***************************************************************************************************
+fatal: [node1]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: ssh: connect to host node1 port 22: No route to host", "unreachable": true}
+ok: [node2]
+
+TASK [collectd : Install or Remove Collectd] *****************************************************************************
+included: /home/ec2-user/ansible/roles/collectd/tasks/install_collectd.yml for node2
+
+TASK [collectd : Update Amazon Linux 2] **********************************************************************************
+skipping: [node2] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [collectd : Release APT lock (Ubuntu only)] *************************************************************************
+[WARNING]: Consider using 'become', 'become_method', and 'become_user' rather than running sudo
+ok: [node2] => {"changed": false, "cmd": ["sudo", "rm", "-f", "/var/lib/apt/lists/lock", "/var/cache/apt/archives/lock", "/var/lib/dpkg/lock*"], "delta": "0:00:00.154594", "end": "2023-12-30 22:28:44.325395", "rc": 0, "start": "2023-12-30 22:28:44.170801", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+TASK [collectd : Configure dpkg (Ubuntu only)] ***************************************************************************
+ok: [node2] => {"changed": false, "cmd": ["sudo", "dpkg", "--configure", "-a"], "delta": "0:00:00.324751", "end": "2023-12-30 22:28:45.883228", "rc": 0, "start": "2023-12-30 22:28:45.558477", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+TASK [collectd : Update Ubuntu] ******************************************************************************************

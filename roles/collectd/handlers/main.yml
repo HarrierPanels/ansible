@@ -1,0 +1,22 @@
+---
+- name: Collectd Management
+  block:
+    - name: Restart Collectd
+      service:
+        name: collectd
+        state: restarted
+
+    - name: Test Collectd
+      uri:
+        url: "http://{{ ansible_hostname }}:{{ collectd_exporter_port }}"
+        method: GET
+        status_code: 200
+        return_content: yes
+        validate_certs: no
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 5
+      ignore_errors: true
+      changed_when: false
+  when: install_collectd | bool

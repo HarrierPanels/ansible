@@ -1,0 +1,5 @@
+---
+- name: Run 'collectd' Role
+  hosts: all
+  roles:
+    - collectd
