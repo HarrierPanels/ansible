@@ -76,11 +76,15 @@ create_install_task() {
       block:
         - name: Release APT lock
           apt:
-            name: /var/lib/apt/lists/lock
+            name: "{{ item }}"
             state: absent
           become_method: sudo
           ignore_errors: yes
           changed_when: false
+          loop:
+            - /var/lib/apt/lists/lock
+            - /var/cache/apt/archives/lock
+            - /var/lib/dpkg/lock*
 
         - name: Configure dpkg
           dpkg_reconfigure:
