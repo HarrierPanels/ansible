@@ -1,3 +1,0 @@
----
-- name: Install or Remove Collectd
-  include_tasks: "{{ install_collectd | bool | ternary('install_collectd.yml', 'remove_collectd.yml') }}"

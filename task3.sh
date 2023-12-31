@@ -72,15 +72,17 @@ create_install_task() {
         name: '*'
         state: latest
 
-    - name: Updating Ubuntu
+    - name:Updating Ubuntu...
       block:
-        - name: Release APT lock (Ubuntu only)
-          command: "sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock*"
+        - name: Release APT lock
+          command: "rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock*"
+          become_method: sudo
           ignore_errors: yes
           changed_when: false
 
-        - name: Configure dpkg (Ubuntu only)
-          command: "sudo dpkg --configure -a"
+        - name: Configure dpkg
+          command: "dpkg --configure -a"
+          become_method: sudo
           ignore_errors: yes
           changed_when: false
 
@@ -132,7 +134,6 @@ create_remove_task() {
       poll: 0
       retries: 15
       delay: 10  # 10 seconds between retries
-
 
     - name: Clean cache & remove Collectd directory (Debian only)
       block:
