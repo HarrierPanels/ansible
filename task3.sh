@@ -75,13 +75,15 @@ create_install_task() {
     - name: Updating Ubuntu...
       block:
         - name: Release APT lock
-          command: "rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock*"
+          apt:
+            name: /var/lib/apt/lists/lock
+            state: absent
           become_method: sudo
           ignore_errors: yes
           changed_when: false
 
         - name: Configure dpkg
-          command: "dpkg --configure -a"
+          dpkg_reconfigure:
           become_method: sudo
           ignore_errors: yes
           changed_when: false
