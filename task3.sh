@@ -72,7 +72,7 @@ create_install_task() {
         name: '*'
         state: latest
 
-    - name:Updating Ubuntu...
+    - name: Updating Ubuntu...
       block:
         - name: Release APT lock
           command: "rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock*"
