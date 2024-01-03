@@ -185,4 +185,41 @@ node2 | CHANGED | rc=0 >>
 ```
 The SELinux status check indicates that SELinux is disabled on both nodes. The package existence check verifies the presence of specified packages on both nodes. Task 2 complete!
 ## Task 3
-# Comming soon! Check back often!
+For this task, you will use Ansible to manage a service on the managed nodes. You will also work with Ansible roles, variables, handlers, conditions, loops, and templates.
+
+**Goals:**
+
+  - Create a new role (e.g., *collectd*) to manage the *collectd* service (a simple monitoring exporter):
+     - The role must install the latest release of the *collectd* package and *collectd-write_prometheus* plugin.
+     - Add a handler to restart the collectd service when the service or plugins have been updated.
+     - Enable the *Write Prometheus* plugin (use a *Jinja2* template to create a config).
+     - Ensure the *collectd* service is enabled and started.
+        Collectd prometheus exporter config—/etc/collectd.d/prometheus.conf
+        Default collectd prometheus exporter port—9103
+        Config example:
+
+        LoadPlugin write_prometheus
+        <Plugin write_prometheus>
+           Port 9103
+        </Plugin>
+
+    Add to the collectd prometheus exporter config loading collectd modules:
+        df
+        processes
+        protocols
+        swap
+        tcpconns
+        uptime
+        users
+        vmem
+    some image
+
+    To check exported metrics, run curl http://node1:9103 and curl http://node2:9103.
+    Add a new task to remove collectd service, collectd plugins, and collectd config files:
+        Stop and remove system service
+        Remove collectd and plugins
+        Remove config files
+    some image
+
+    Use a variable to define role behavior (install or remove). The role must install collectd by default.
+
