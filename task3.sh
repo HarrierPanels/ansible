@@ -72,31 +72,11 @@ create_install_task() {
         name: '*'
         state: latest
 
-    - name: Updating Ubuntu...
-      block:
-        - name: Release APT lock
-          apt:
-            name: "{{ item }}"
-            state: absent
-          become_method: sudo
-          ignore_errors: yes
-          changed_when: false
-          loop:
-            - /var/lib/apt/lists/lock
-            - /var/cache/apt/archives/lock
-            - /var/lib/dpkg/lock*
-
-        - name: Configure dpkg
-          dpkg_reconfigure:
-          become_method: sudo
-          ignore_errors: yes
-          changed_when: false
-
-        - name: Update Ubuntu
-          apt:
-            upgrade: dist
-            update_cache: yes
+    - name: Update Ubuntu
       when: ansible_os_family == 'Debian'
+      apt:
+        upgrade: dist
+        update_cache: yes
 
     - name: Update OS & Install Collectd
       package:
@@ -224,9 +204,9 @@ delete_all() {
 # Function to run Ansible playbooks
 run_playbooks() {
     echo "Running Ansible playbooks..."
-    ansible-playbook -i "$inventory_file" "$playbook_file" -v
+    ansible-playbook -i "$inventory_file" "$playbook_file" -vv
     ansible-playbook -i "$inventory_file" "$playbook_file" \
-        -e install_collectd=false -v
+        -e install_collectd=false -vv
 }
 
 # Redirect all output to a log file
