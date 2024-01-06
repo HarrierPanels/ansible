@@ -101,25 +101,21 @@ create_remove_task() {
 ---
 - name: Remove Collectd
   block:
+    - name: Remove Config Files
+      file:
+        path: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
+        state: absent
+
     - name: Stop and Disable Collectd
       systemd:
         name: collectd
         state: stopped
         enabled: no
 
-    - name: Remove Config Files
-      file:
-        path: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
-        state: absent
-
     - name: Remove Collectd and Plugins (RedHat only)
       when: ansible_os_family == 'RedHat'
-      yum:
-        name: "{{ 'packages' }}"
-      vars:
-        packages:
-        - collectd
-        - collectd-write_prometheus
+      package:
+        name: collectd,collectd-write_prometheus
         state: absent
       async: 120  # 2 minutes
       poll: 0
