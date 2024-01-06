@@ -101,20 +101,25 @@ create_remove_task() {
 ---
 - name: Remove Collectd
   block:
-    - name: Remove Config Files
-      file:
-        path: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
-        state: absent
-
     - name: Stop and Disable Collectd
       systemd:
         name: collectd
         state: stopped
         enabled: no
 
-    - name: Remove Collectd and Plugins
-      package:
-        name: "{{ 'collectd,collectd-write_prometheus' if ansible_os_family == 'RedHat' else 'collectd' }}"
+    - name: Remove Config Files
+      file:
+        path: "{{ (ansible_os_family == 'RedHat') | ternary('/etc/collectd.d/prometheus.conf', '/etc/collectd/collectd.conf.d/prometheus.conf') }}"
+        state: absent
+
+    - name: Remove Collectd and Plugins (RedHat only)
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: "{{ 'packages' }}"
+      vars:
+        packages:
+        - collectd
+        - collectd-write_prometheus
         state: absent
       async: 120  # 2 minutes
       poll: 0
@@ -123,12 +128,18 @@ create_remove_task() {
 
     - name: Clean cache & remove Collectd directory (Debian only)
       block:
-        - name: Clean up APT cache (Debian only)
+        - name: Remove Collectd
           apt:
-            autoclean: yes
-            autoremove: yes
+            name: collectd
+            state: absent
+            purge: true
+            autoremove: true
+          async: 120  # 2 minutes
+          poll: 0
+          retries: 15
+          delay: 10  # 10 seconds between retries
 
-        - name: Remove Collectd directory (Debian only)
+        - name: Remove Collectd directory
           file:
             path: "/etc/collectd"
             state: absent
