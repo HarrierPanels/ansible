@@ -230,7 +230,7 @@ non-zero return code
 ```
 The output indicates that the '*which collectd*' command failed to find the *collectd* executable on both **node1** and **node2**. The error message "*which: no collectd in (/sbin:/bin:/usr/sbin:/usr/bin)*" means that the *which* command was unable to locate the *collectd* executable in the standard system directories.
 #### Task Implementation
-To achieve the task goals, the script **[task3.sh](./task3.sh)** automates the configuration and management of the *Collectd* monitoring system on two remote servers, **node1** and **node2**. It creates an Ansible inventory, role structure, default variables, tasks for managing *Collectd*, installation, test, removal, handlers for restarting *Collectd*, and a Prometheus Config Template. The script then generates an Ansible playbook to execute the '*collectd*' role, runs the playbook, and logs the entire process (see **[task3_logs](./task3_logs)**).
+To achieve the task goals, the script **[task3.sh](./task3.sh)** automates the configuration and management of the *Collectd* monitoring system on two remote servers, **node1** and **node2**. It creates an Ansible inventory, role structure, default variables, tasks for managing *Collectd*, installation, test, removal, handlers for restarting *Collectd*, and a *Prometheus Config* Template. The script then generates an Ansible playbook to execute the '*collectd*' role, runs the playbook, and logs the entire process (see **[task3_logs](./task3_logs)**).
 
 After script completion, the ad-hoc commands checking for the presence of *Collectd* on both nodes (**node1** and **node2**) indicate that Collectd was successfully removed.
 ```
