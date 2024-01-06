@@ -220,4 +220,12 @@ For this task, you will use Ansible to manage a service on the managed nodes. Yo
    - Remove config files
 
     - Use a variable to define role behavior (install or remove). The role must install *collectd* by default.
-
+#### Initial Node Assessment
+```
+[ec2-user@ip-192-168-0-145 ~]$ ansible all -i hosts -m shell -a "which collectd"
+node1 | FAILED | rc=1 >>
+which: no collectd in (/sbin:/bin:/usr/sbin:/usr/bin)non-zero return code
+node2 | FAILED | rc=1 >>
+non-zero return code
+```
+The output indicates that the '*which collectd*' command failed to find the *collectd* executable on both node1 and node2. The error message "*which: no collectd in (/sbin:/bin:/usr/sbin:/usr/bin)*" means that the *which* command was unable to locate the *collectd* executable in the standard system directories.
